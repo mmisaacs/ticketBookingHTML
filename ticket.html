@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tickets</title>
+</head>
+
+<body>
+    <a href="index.html">
+        <button>Home</button>
+    </a>
+    <button onclick="loadCSV()">Load Booking Data</button>
+    <h1>Tickets</h1>
+
+    <label for="resNum">Reservation Number:</label>
+    <input type="number" id="resNum" name="resNum" min="0001" max="9999" />
+    <button type="button" onclick="getTicket()">Confirm</button>
+
+    <div id="reservationDetails">
+        <!-- Reservation details will be shown here -->
+    </div>
+
+    <script>
+        function loadCSV() {
+            return fetch('reservations.csv') // Ensure the CSV file is in the same folder as your HTML
+                .then(response => response.text())
+                .then(csvText => {
+                    return parseCSV(csvText);
+                })
+                .catch(error => {
+                    console.error('Error loading CSV:', error);
+                    return [];
+                });
+        }
+
+        // Function to parse the CSV text
+        function parseCSV(csvText) {
+            const rows = csvText.trim().split('\n');
+            const reservations = [];
+
+            // Skip the header (first row)
+            rows.slice(1).forEach(row => {
+                const columns = row.split(',');
+                reservations.push({
+                    reservationNumber: columns[0],
+                    date: columns[1],
+                    passengers: columns[2],
+                    destination: columns[3]
+                });
+            });
+
+            return reservations;
+        }
+
+        function getTicket() {
+            const resNum = document.getElementById('resNum').value;
+            loadCSV().then(reservations => {
+                const reservation = reservations.find(r => r.reservationNumber === resNum);
+                const reservationDetails = document.getElementById('reservationDetails');
+
+                // Clear previous data
+                reservationDetails.innerHTML = '';
+
+                if (reservation) {
+                    // If reservation is found, display details
+                    reservationDetails.innerHTML = `
+                        <h2>Your Ticket</h2>
+                        <p><strong>Reservation Number:</strong> ${reservation.reservationNumber}</p>
+                        <p><strong>Date:</strong> ${reservation.date}</p>
+                        <p><strong>Passengers:</strong> ${reservation.passengers}</p>
+                        <p><strong>Destination:</strong> ${reservation.destination}</p>
+                    `;
+                } else {
+                    // If reservation is not found
+                    reservationDetails.innerHTML = '<p>Reservation not found. Please check the reservation number and try again.</p>';
+                }
+            });
+        }
+    </script>
+</body>

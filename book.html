@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nowtrack Booking</title>
+</head>
+<body>
+    <h1>Book Your Trip</h1>
+<table>
+    <tr>
+        <!-- Dates-->
+        <td>Travel Date</td>
+
+        <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+            <p>2024</p>
+            <select id="month" onchange="populateDays()">
+                <option value="" disabled selected>Month</option>
+                <option value='1'>Jan(1)</option>
+                <option value='2'>Feb(2)</option>
+                <option value='3'>Mar(3)</option>
+                <option value='4'>Apr(4)</option>
+                <option value='5'>May(5)</option>
+                <option value='6'>Jun(6)</option>
+                <option value='7'>Jul(7)</option>
+                <option value='8'>Aug(8)</option>
+                <option value='9'>Sep(9)</option>
+                <option value='10'>Oct(10)</option>
+                <option value='11'>Nov(11)</option>
+                <option value='12'>Dec(12)</option>
+            </select>
+            <div id="month_selected"></div>
+
+            <select id="day">
+                <option value="" disabled selected>Day</option>
+            </select>
+        </div></td>
+    </tr>
+
+    <tr>
+        <!-- Number of Travelers -->
+        <td>Travelers</td>
+        <td><select id="passengers">
+            <option value="" disabled selected>Passengers</option>
+            <option value='1'>1</option>
+            <option value='2'>2</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>5+</option>
+        </select>
+            <div id="pass_selected"></div>
+        </td>
+    </tr>
+
+    <tr>
+        <!-- Destination Row -->
+        <td>Destination</td>
+        <td><select id="Select Destination">
+            <option value="" disabled selected>Choose Location</option>
+            <option value='1'>Seoul</option>
+            <option value='2'>Busan</option>
+            <option value='3'>Daegu</option>
+            <option value='4'>Suwon</option>
+            <option value='5'>Ulsan</option>
+        </select>
+        <div id="option_selected"></div>
+        </td>
+    </tr>
+</table>
+<button onclick="checkFilled()">Book</button>
+
+<div id="confirmation">
+    <!-- Reservation details will be shown here -->
+</div>
+
+<script>
+    //the following function is cowritten by ChatGPT
+    function populateDays() {
+      const monthSelect = document.getElementById("month");
+      const daySelect = document.getElementById("day");
+      const month = parseInt(monthSelect.value);
+
+      // Days in each month
+      const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+      // Adjust for leap years if February is selected
+      const year = new Date().getFullYear();
+      if (month === 2 && ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)) {
+        daysInMonth[1] = 29;
+      }
+
+      // Clear existing days
+      daySelect.innerHTML = '<option value="" disabled selected>Day</option>';
+
+      // Populate days
+      for (let i = 1; i <= daysInMonth[month - 1]; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        daySelect.appendChild(option);
+      }
+    }
+
+    function checkFilled() {
+        const inputMonth = document.getElementById("month").value;
+        const inputDay = document.getElementById("day").value;
+        const inputPass = document.getElementById("passengers").value;
+        const inputDestin = document.getElementById("Select Destination").value;
+
+        if(inputMonth === "" || inputDay === "" || inputPass === "" || inputDestin === ""){
+            alert("All options must be selected.");
+        }
+        else{
+            bookConfirm();
+        }
+    }
+
+    function bookConfirm() {
+        confirmation.innerHTML = `
+            <p><strong>Booking Confirmed</strong></p>
+            <p><strong>Booking Number</strong></p>
+            <a href="index.html">
+                <button>Home</button>
+            </a>
+            <a href="ticket.html">
+                <button>See Ticket</button>
+            </a>
+        `;
+    }
+</script>
+</body>
+</html>
