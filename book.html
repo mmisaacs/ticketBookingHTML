@@ -3,32 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Nowtrack Booking</title>
+    <style>
+        #monthDrop {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Book Your Trip</h1>
 <table>
     <tr>
-        <!-- Dates-->
+        <!--Dates-->
         <td>Travel Date</td>
 
         <td>
-            <div style="display: flex; align-items: center; gap: 10px;">
-            <p>2024</p>
-            <select id="month" onchange="populateDays()">
-                <option value="" disabled selected>Month</option>
-                <option value='1'>Jan(1)</option>
-                <option value='2'>Feb(2)</option>
-                <option value='3'>Mar(3)</option>
-                <option value='4'>Apr(4)</option>
-                <option value='5'>May(5)</option>
-                <option value='6'>Jun(6)</option>
-                <option value='7'>Jul(7)</option>
-                <option value='8'>Aug(8)</option>
-                <option value='9'>Sep(9)</option>
-                <option value='10'>Oct(10)</option>
-                <option value='11'>Nov(11)</option>
-                <option value='12'>Dec(12)</option>
-            </select>
+            <div id="monthDrop">
+                <p>2024</p>
+                <select id="month" onchange="populateDays()">
+                    <option value="" disabled selected>Month</option>
+                    <option value='1'>Jan(1)</option>
+                    <option value='2'>Feb(2)</option>
+                    <option value='3'>Mar(3)</option>
+                    <option value='4'>Apr(4)</option>
+                    <option value='5'>May(5)</option>
+                    <option value='6'>Jun(6)</option>
+                    <option value='7'>Jul(7)</option>
+                    <option value='8'>Aug(8)</option>
+                    <option value='9'>Sep(9)</option>
+                    <option value='10'>Oct(10)</option>
+                    <option value='11'>Nov(11)</option>
+                    <option value='12'>Dec(12)</option>
+                </select>
             <div id="month_selected"></div>
 
             <select id="day">
@@ -58,11 +65,11 @@
         <td>Destination</td>
         <td><select id="Select Destination">
             <option value="" disabled selected>Choose Location</option>
-            <option value='1'>Seoul</option>
-            <option value='2'>Busan</option>
-            <option value='3'>Daegu</option>
-            <option value='4'>Suwon</option>
-            <option value='5'>Ulsan</option>
+            <option value='Seoul'>Seoul</option>
+            <option value='Busan'>Busan</option>
+            <option value='Daegu'>Daegu</option>
+            <option value='Suwon'>Suwon</option>
+            <option value='Ulsan'>Ulsan</option>
         </select>
         <div id="option_selected"></div>
         </td>
@@ -75,6 +82,8 @@
 </div>
 
 <script>
+    let resNum;
+
     //the following function is cowritten by ChatGPT
     function populateDays() {
       const monthSelect = document.getElementById("month");
@@ -112,14 +121,55 @@
             alert("All options must be selected.");
         }
         else{
-            bookConfirm();
+            writeCSVFile();
         }
     }
 
+    function generateReservationNumber() {
+        const randomNumber = Math.floor(Math.random() * 9999) + 1;  //generate a number between 1 and 9999
+        return randomNumber.toString().padStart(4, '0');  //ensure it's 4 digits
+    }
+
+    function writeCSVFile() {
+            //formatting is assisted with ChatGPT
+            // Generate the reservation number
+            resNum = generateReservationNumber();
+
+            // Collect other form data
+            const inputMonth = document.getElementById("month").value;
+            const inputDay = document.getElementById("day").value;
+            const inputPass = document.getElementById("passengers").value;
+            const inputDestin = document.getElementById("Select Destination").value;
+
+            // Format the date as 'yyyy-mm-dd'
+            const year = 2024; // You can update this if the year is dynamic
+            const formattedDate = `${year}-${String(inputMonth).padStart(2, '0')}-${String(inputDay).padStart(2, '0')}`;
+
+            // Define the CSV heading and data row
+            let csv = 'Reservation Number,Date,Passengers,Destination\n';
+            const reservationData = [
+                [resNum, formattedDate, inputPass, inputDestin]
+            ];
+
+            // Merge the data with CSV
+            reservationData.forEach(function(row) {
+                csv += row.join(',') + "\n";
+            });
+
+            // Create a downloadable file
+            var hiddenElement = document.createElement('a');
+            hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+            hiddenElement.target = '_blank';
+
+            hiddenElement.download = 'reservations.csv'; // File name
+            hiddenElement.click();
+            bookConfirm();
+        }
+
     function bookConfirm() {
         confirmation.innerHTML = `
-            <p><strong>Booking Confirmed</strong></p>
-            <p><strong>Booking Number</strong></p>
+            <h2>Booking Confirmed</h2>
+            <p><strong>Booking Number: ${resNum}</strong></p>
             <a href="index.html">
                 <button>Home</button>
             </a>

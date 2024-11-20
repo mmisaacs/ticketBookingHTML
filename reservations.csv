@@ -1,3 +1,2 @@
-reservation number,date,passengers,destination
-0001,2024-11-15,2,Daegu
-0002,2024-11-19,2,Busan
+Reservation Number,Date,Passengers,Destination
+1592,2024-07-05,4,Daegu
